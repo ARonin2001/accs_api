@@ -20,12 +20,15 @@ export class Student extends BaseEntity {
   email: string;
 
   @Column()
+  password: string;
+
+  @Column()
   dateOfBirth: Date;
 
   @Column()
   address: string;
 
-  @Column()
+  @Column({ nullable: true })
   dateReceipt: Date;
 
   @Column({ nullable: true })

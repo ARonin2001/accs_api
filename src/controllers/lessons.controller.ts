@@ -1,0 +1,56 @@
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { CreateLessonDto } from 'src/dto/Lesson/CreateLessonDto';
+import { Lesson } from 'src/entities/Lesson/Lesson.entity';
+import { LessonService } from './../services/lesson.service';
+
+@Controller('lesson')
+export class LessonController {
+  constructor(private readonly lessonService: LessonService) {}
+
+  @Post('create')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'create a new lesson' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'The lesson has been successfully created.',
+    type: Lesson,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Teacher not found.',
+  })
+  async createCourse(@Body() lesson: CreateLessonDto) {
+    return await this.lessonService.create(lesson);
+  }
+
+  @Get('get-by-id/:id')
+  @ApiOperation({ summary: 'Get a lesson by id' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Return a lesson.',
+    type: [Lesson],
+  })
+  async getById(@Param('id') id: number) {
+    return await this.lessonService.getById(id);
+  }
+
+  @Get('get-all')
+  @ApiOperation({ summary: 'Get all lessons' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Return all lessons',
+    type: [Lesson],
+  })
+  async getAll() {
+    return await this.lessonService.getAll();
+  }
+}

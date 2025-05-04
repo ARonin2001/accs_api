@@ -21,6 +21,9 @@ export class Teacher extends BaseEntity {
   email: string;
 
   @Column()
+  password: string;
+
+  @Column()
   dateOfBirth: Date;
 
   @Column()
