@@ -8,8 +8,9 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { CreateCourseDto } from 'src/dto/Course/CreateCourseDto';
 import { Course } from 'src/entities/Course/Course.entity';
 import { CourseService } from './../services/course.service';
@@ -46,14 +47,17 @@ export class CourseController {
   }
 
   @Get('get-all')
+  @ApiQuery({ name: 'title', required: false, description: 'title of course' })
   @ApiOperation({ summary: 'Get all courses' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Return all crouses',
     type: [Course],
   })
-  async getAll() {
-    return await this.courseService.getAll();
+  async getAll(@Query('title') title?: string) {
+    return await this.courseService.getAll({
+      title,
+    });
   }
 
   @Delete('delete/:id')
@@ -81,5 +85,16 @@ export class CourseController {
   })
   async updateById(@Param('id') id: number, @Body() course: Partial<Course>) {
     return await this.courseService.updateById(id, course);
+  }
+
+  @Get('get-by-title/:title')
+  @ApiOperation({ summary: 'Get courses by title' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Return courses by title',
+    type: [Course],
+  })
+  async getBytitle(@Param('title') title: string) {
+    return await this.courseService.getByTitle(title);
   }
 }

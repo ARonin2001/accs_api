@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CourseSearchFilterDto } from 'src/dto/Course/CourseSearchFilter.dto';
 import { CreateCourseDto } from 'src/dto/Course/CreateCourseDto';
 import { Teacher } from 'src/entities/Teacher/Teacher.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Course } from './../entities/Course/Course.entity';
 
 @Injectable()
@@ -44,10 +45,15 @@ export class CourseService {
     return course;
   }
 
-  async getAll(): Promise<Course[]> {
-    return await this.courseRepository.find({
-      relations: ['teacher', 'lessons'],
-    });
+  async getAll({ title }: CourseSearchFilterDto): Promise<Course[]> {
+    const qb = this.courseRepository.createQueryBuilder('course');
+
+    if (title)
+      qb.andWhere('course.title LIKE :title', {
+        title: `%${title}%`,
+      });
+
+    return await qb.getMany();
   }
 
   async deleteById(id: number) {
@@ -67,5 +73,13 @@ export class CourseService {
       throw new NotFoundException(`Course with id ${id} not founded`);
 
     return await this.courseRepository.update(id, options);
+  }
+
+  async getByTitle(title: string) {
+    const course = await this.courseRepository.find({
+      where: { title: Like(`%${title}%`) },
+    });
+
+    return course;
   }
 }
