@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCourseDto } from 'src/dto/Course/CreateCourseDto';
-import { Lesson } from 'src/entities/Lesson/Lesson.entity';
 import { Teacher } from 'src/entities/Teacher/Teacher.entity';
 import { Repository } from 'typeorm';
 import { Course } from './../entities/Course/Course.entity';
@@ -13,8 +12,6 @@ export class CourseService {
     private readonly courseRepository: Repository<Course>,
     @InjectRepository(Teacher)
     private readonly teacherRepository: Repository<Teacher>,
-    @InjectRepository(Lesson)
-    private readonly lessonRepository: Repository<Lesson>,
   ) {}
 
   async create(courseDto: CreateCourseDto): Promise<Course> {
@@ -51,5 +48,24 @@ export class CourseService {
     return await this.courseRepository.find({
       relations: ['teacher', 'lessons'],
     });
+  }
+
+  async deleteById(id: number) {
+    const course = await this.courseRepository.findOne({ where: { id } });
+
+    if (!course)
+      throw new NotFoundException(`Course with id ${id} not founded`);
+
+    await this.courseRepository.update(id, { isDeleted: true });
+    return await this.courseRepository.softRemove(course);
+  }
+
+  async updateById(id: number, options: Partial<Course>) {
+    const course = await this.courseRepository.findOne({ where: { id } });
+
+    if (!course)
+      throw new NotFoundException(`Course with id ${id} not founded`);
+
+    return await this.courseRepository.update(id, options);
   }
 }

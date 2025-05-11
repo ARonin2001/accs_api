@@ -53,4 +53,17 @@ export class LessonController {
   async getAll() {
     return await this.lessonService.getAll();
   }
+
+  @Get('get-by-course-id/:courseid')
+  @ApiOperation({ summary: 'Get lessons by course id' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Return all lessons by course id',
+    type: [Lesson],
+  })
+  async getAllByCourseId(
+    @Param('courseid') courseId: number,
+  ): Promise<Lesson[]> {
+    return await this.lessonService.getAllByCourseId(courseId);
+  }
 }

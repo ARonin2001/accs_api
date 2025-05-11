@@ -1,13 +1,15 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateCourseDto } from 'src/dto/Course/CreateCourseDto';
 import { Course } from 'src/entities/Course/Course.entity';
 import { CourseService } from './../services/course.service';
@@ -52,5 +54,32 @@ export class CourseController {
   })
   async getAll() {
     return await this.courseService.getAll();
+  }
+
+  @Delete('delete/:id')
+  @ApiOperation({ summary: 'Delete a course by id' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Return course',
+    type: [Course],
+  })
+  async deleteById(@Param('id') id: number) {
+    return await this.courseService.deleteById(id);
+  }
+
+  @Put('update/:id')
+  @ApiOperation({ summary: 'Update a course by id' })
+  @ApiBody({
+    type: Course,
+    required: false,
+    description: 'Partial update of course fields',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'The course has been successfully updated.',
+    type: Course,
+  })
+  async updateById(@Param('id') id: number, @Body() course: Partial<Course>) {
+    return await this.courseService.updateById(id, course);
   }
 }

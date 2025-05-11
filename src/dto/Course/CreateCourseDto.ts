@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCourseDto {
+  @ApiProperty({ required: false, nullable: true })
+  id?: number;
+
   @ApiProperty({ minLength: 1 })
   title: string;
 

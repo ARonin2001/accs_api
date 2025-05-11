@@ -47,4 +47,10 @@ export class LessonService {
   async getAll(): Promise<Lesson[]> {
     return await this.lessonRepository.find({ relations: ['course'] });
   }
+
+  async getAllByCourseId(courseId: number): Promise<Lesson[]> {
+    return await this.lessonRepository.find({
+      where: { course: { id: courseId } },
+    });
+  }
 }
