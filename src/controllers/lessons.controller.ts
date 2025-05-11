@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -65,5 +66,16 @@ export class LessonController {
     @Param('courseid') courseId: number,
   ): Promise<Lesson[]> {
     return await this.lessonService.getAllByCourseId(courseId);
+  }
+
+  @Delete('delete/:id')
+  @ApiOperation({ summary: 'Delete lessons by id' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Lesson was been deleted',
+    type: [Lesson],
+  })
+  async deleteById(@Param('id') id: number) {
+    return await this.lessonService.deleteById(id);
   }
 }

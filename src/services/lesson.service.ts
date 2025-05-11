@@ -53,4 +53,14 @@ export class LessonService {
       where: { course: { id: courseId } },
     });
   }
+
+  async deleteById(id: number) {
+    const lesson = await this.lessonRepository.findOne({ where: { id } });
+
+    if (!lesson)
+      throw new NotFoundException(`The lesson with id: ${id} not found`);
+
+    await this.lessonRepository.update(id, { isDeleted: true });
+    return await this.lessonRepository.softRemove(lesson);
+  }
 }
