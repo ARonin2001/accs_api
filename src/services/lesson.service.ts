@@ -4,6 +4,7 @@ import { CreateLessonDto } from 'src/dto/Lesson/CreateLessonDto';
 import { Course } from 'src/entities/Course/Course.entity';
 import { Lesson } from 'src/entities/Lesson/Lesson.entity';
 import { Repository } from 'typeorm';
+import { UpdateLessonDto } from './../dto/Lesson/UpdateLesson.dto';
 
 @Injectable()
 export class LessonService {
@@ -62,5 +63,18 @@ export class LessonService {
 
     await this.lessonRepository.update(id, { isDeleted: true });
     return await this.lessonRepository.softRemove(lesson);
+  }
+
+  async update(updateLessonDto: UpdateLessonDto) {
+    const lesson = await this.lessonRepository.findOne({
+      where: { id: updateLessonDto.id },
+    });
+
+    if (!lesson)
+      throw new NotFoundException(
+        `The lesson with id: ${updateLessonDto.id} not found`,
+      );
+
+    await this.lessonRepository.update(updateLessonDto.id, updateLessonDto);
   }
 }

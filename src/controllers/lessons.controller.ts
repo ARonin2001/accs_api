@@ -7,9 +7,11 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateLessonDto } from 'src/dto/Lesson/CreateLessonDto';
+import { UpdateLessonDto } from 'src/dto/Lesson/UpdateLesson.dto';
 import { Lesson } from 'src/entities/Lesson/Lesson.entity';
 import { LessonService } from './../services/lesson.service';
 
@@ -77,5 +79,11 @@ export class LessonController {
   })
   async deleteById(@Param('id') id: number) {
     return await this.lessonService.deleteById(id);
+  }
+
+  @Put('update')
+  @ApiOperation({ summary: 'Lesson lesson by id' })
+  async update(@Body() updateLessonDto: UpdateLessonDto) {
+    return await this.lessonService.update(updateLessonDto);
   }
 }
